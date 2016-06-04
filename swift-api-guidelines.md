@@ -18,7 +18,7 @@
 
 另外，对于文档注释，还有以下补充说明：
 
-#### 1.3.1 使用[Swift Markdown方言]来编写注释
+#### 1.3.1 使用[Swift Markdown方言](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/)来编写注释
 
 #### 1.3.2 在任何声明之前，（让注释）以一个摘要开始
 
@@ -101,40 +101,25 @@ var first: Element?
 ///   at the end.                                ⎟
 ///                                              ⎭
 /// - Note: To print without a trailing          ⎫
-///   newline, pass `terminator: ""`               ⎟
+///   newline, pass `terminator: ""`             ⎟
 ///                                              ⎬ Symbol commands
-/// - SeeAlso: `CustomDebugStringConvertible`,     ⎟
-///   `CustomStringConvertible`, `debugPrint`.       ⎭
+/// - SeeAlso: `CustomDebugStringConvertible`,   ⎟
+///   `CustomStringConvertible`, `debugPrint`.   ⎭
 public func print(
   items: Any..., separator: String = " ", terminator: String = "\n")
 ```
 
-* 合适的时候，在注释中使用[Markdown标记注释文档]；
-* **了解并使用[symbol command syntax]在文档突出特定内容**。一些流行的开发工具，例如：Xcode，可以对文档中的下列关键字做特殊处理，并突出显示它们：
-    ▪   [Attention]
-    ▪   [Author]
-    ▪   [Authors]
-    ▪   [Bug]
-    ▪   [Complexity]
-    ▪   [Copyright]
-    ▪   [Date]
-    ▪   [Experiment]
-    ▪   [Important]
-    ▪   [Invariant]
-    ▪   [Note]
-    ▪   [Parameter]
-    ▪   [Parameters]
-    ▪   [Postcondition]
-    ▪   [Precondition]
-    ▪   [Remark]
-    ▪   [Requires]
-    ▪   [Returns]
-    ▪   [SeeAlso]
-    ▪   [Since]
-    ▪   [Throws]
-    ▪   [Todo]
-    ▪   [Version]
-    ▪   [Warning]
+* 合适的时候，在注释中使用[Markdown标记注释文档](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SymbolDocumentation.html#//apple_ref/doc/uid/TP40016497-CH51-SW1)；
+* **了解并使用[symbol command syntax](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SymbolDocumentation.html#//apple_ref/doc/uid/TP40016497-CH51-SW13)在文档突出特定内容** 
+
+一些流行的开发工具，例如：Xcode，可以对文档中的下列关键字做特殊处理，并突出显示它们：
+
+[Attention](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Attention.html) | [Author](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Author.html) | [Authors](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Authors.html) | [Bug](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Bug.html)
+[Complexity](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Complexity.html) | [Copyright](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Copyright.html) | [Date](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Date.html) | [Experiment](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Experiment.html)
+[Important](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Important.html) | [Invariant](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Invariant.html) | [Note](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Note.html) | [Parameter](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Parameter.html)
+[Parameters](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Parameters.html) | [Postcondition](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Postcondition.html) | [Precondition](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Precondition.html) | [Remark](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Remark.html)
+[Requires](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Requires.html) | [Returns](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Returns.html) | [SeeAlso](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SeeAlso.html) | [Since](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Since.html)
+[Throws](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Throws.html) | [Todo](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Todo.html) | [Version](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Version.html) | [Warning](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/Warning.html)
 
 ## 第二部分 命名规则
 
@@ -253,6 +238,7 @@ x.nounCapitalize()
 AudioUnit.instantiate(
     with: description, 
     options: [.inProcess], completionHandler: stopProgressBar)
+```
 
 #### 2.2.2 在工厂方法的名字前使用`make`，例如：`x.makeIterator()`；
 
