@@ -188,7 +188,7 @@ class ProductionLine {
 }
 ```
 
-如果`associatedtype`和`protocol`关联性非常强(fn)，甚至`protocol`的名称就是`associatedtype`要承担的角色。此时，为了避免名称冲突，应该在`associatedtype`的名称末尾添加`Type`后缀，例如：
+如果`associatedtype`和`protocol`关联性非常强，甚至`protocol`的名称就是`associatedtype`要承担的角色。此时，为了避免名称冲突，应该在`associatedtype`的名称末尾添加`Type`后缀，例如：
 
 ```swift
 protocol Sequence {
@@ -232,7 +232,7 @@ x.subViews(color: y)
 x.nounCapitalize()
 ```
 
-通常，对于那些在调用时，不影响方法核心语义的参数(fn)，为了表意的连贯，让他们的参数有更简单的形式(fn)也是可接受的。例如：
+通常，对于那些在调用时，不影响方法核心语义的参数，为了表意的连贯，让他们的参数有更简单的形式也是可接受的。例如：
 
 ```swift
 AudioUnit.instantiate(
