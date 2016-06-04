@@ -24,9 +24,11 @@
 
 通常，应该让读者可以根据这个摘要和声明完全理解API的功能。例如：
 
-'' /// Returns a "view" of `self` containing the same elements in
-'' /// reverse order.
-'' func reversed() -> ReverseCollection
+```swift
+/// Returns a "view" of `self` containing the same elements in
+/// reverse order.
+func reversed() -> ReverseCollection
+```
 
 * **专注于写摘要**
 
@@ -40,16 +42,18 @@
 
 如果函数只是简单返回内容，就忽略掉做什么的部分；如果函数返回`Void`，就忽略返回值的描述，例如：
 
-'' /// Inserts `newHead` at the beginning of `self`.
-'' mutating func prepend(newHead: Int)
-'' 
-'' /// Returns a `List` containing `head` followed by the elements
-'' /// of `self`.
-'' func prepending(head: Element) -> List
-'' 
-'' /// Removes and returns the first element of `self` if non-empty;
-'' /// returns `nil` otherwise.
-'' mutating func popFirst() -> Element?
+```swift
+/// Inserts `newHead` at the beginning of `self`.
+mutating func prepend(newHead: Int)
+ 
+/// Returns a `List` containing `head` followed by the elements
+/// of `self`.
+func prepending(head: Element) -> List
+ 
+/// Removes and returns the first element of `self` if non-empty;
+/// returns `nil` otherwise.
+mutating func popFirst() -> Element?
+```
 
 当然，`popFirst`方法出现了一些例外，我们使用了两句话描述了摘要。当遇到这种情况时，使用分号分隔开多个语句。
 
