@@ -1,6 +1,6 @@
 # `Array`的桥接规则
 
-当`Array`中的元素是任何class类型或`@objc`修饰的类型时，`Array`都会被桥接到Obejctive-C处理，并通过一致性转换，桥接回Swift，这叫做bridged verbatim；
+当`Array`中的元素是任何class类型或`@objc`修饰的类型时，`Array`都会被桥接到Objective-C处理，并通过一致性转换，桥接回Swift，这叫做bridged verbatim；
 
 一个非bridge verbatim的类型`T`可以通过遵从`BridgedToObjectiveC` protocol来定义当它在Swift到Objective-C之间桥接的过程：
 
