@@ -31,7 +31,7 @@ protocol _ConditionallyBridgedToObjectiveC : _BridgedToObjectiveC {
 * **Trival bridging back**（注：从Objective-C -> Swift）：把`NSArray`隐式转换成`[AnyObject]`的算法复杂度是O(1)，再加上一个对`NSArray`调用`copy()`的开销；
 * **在不同`Array`类型之间的隐式转换**：
 	* `[Derived]`转换成`[Base]`的算法复杂度是O(1)；
-	* `[X]`转换成`[X._ObjectiveType]`的算法复杂度是O(N)；
+	* `[X]`转换成`[X._ObjectiveCType]`的算法复杂度是O(N)；
 
 > 以上两种隐式类型转换都可能发生trival bridging。
 	
