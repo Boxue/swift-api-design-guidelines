@@ -42,7 +42,7 @@ protocol _ConditionallyBridgedToObjectiveC : _BridgedToObjectiveC {
 	*  **Forced downcasting**：把`[AnyObject]`转换成`[Derived]`的算法复杂度是O(1)；
 	* **Forced bridging back**：把`[AnyObject]`转换成`[X]`的时间复杂度是O(N)；
 
-例如：当用户通过Swift编写了一个接受`[NSView]`类型的方法时，这个方法暴露给Objective-C时，是一个接受`NSArray`为参数的方法。在Objective-C中被调用的时候，这个`NSArray`会被强制转换回`[View]`。
+例如：当用户通过Swift编写了一个接受`[NSView]`类型的方法时，这个方法暴露给Objective-C时，是一个接受`NSArray`为参数的方法。在Objective-C中被调用的时候，这个`NSArray`会被强制转换回`[NSView]`。
 
 当数组中的任何元素发生forced conversion失败时，通常是发生了一个可以捕获的错误。对于forced downcasting来说，这个错误可能会被延后到发生错误的对象被访问的时候才能捕捉到。
 
