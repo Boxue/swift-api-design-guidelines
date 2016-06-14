@@ -45,11 +45,11 @@ func reversed() -> ReverseCollection
 ```swift
 /// Inserts `newHead` at the beginning of `self`.
 mutating func prepend(newHead: Int)
- 
+
 /// Returns a `List` containing `head` followed by the elements
 /// of `self`.
 func prepending(head: Element) -> List
- 
+
 /// Removes and returns the first element of `self` if non-empty;
 /// returns `nil` otherwise.
 mutating func popFirst() -> Element?
@@ -77,7 +77,7 @@ init(count n: Int, repeatedElement x: Element)
 /// A collection that supports equally efficient insertion/removal
 /// at any position.
 struct List {
- 
+
 /// The element at the beginning of `self`, or `nil` if self is
 /// empty.
 var first: Element?
@@ -110,7 +110,7 @@ public func print(
 ```
 
 * 合适的时候，在注释中使用[Markdown标记注释文档](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SymbolDocumentation.html#//apple_ref/doc/uid/TP40016497-CH51-SW1)；
-* **了解并使用[symbol command syntax](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SymbolDocumentation.html#//apple_ref/doc/uid/TP40016497-CH51-SW13)在文档突出特定内容** 
+* **了解并使用[symbol command syntax](https://developer.apple.com/library/prerelease/mac/documentation/Xcode/Reference/xcode_markup_formatting_ref/SymbolDocumentation.html#//apple_ref/doc/uid/TP40016497-CH51-SW13)在文档突出特定内容**
 
 一些流行的开发工具，例如：Xcode，可以对文档中的下列关键字做特殊处理，并突出显示它们：
 
@@ -236,7 +236,7 @@ x.nounCapitalize()
 
 ```swift
 AudioUnit.instantiate(
-    with: description, 
+    with: description,
     options: [.inProcess], completionHandler: stopProgressBar)
 ```
 
@@ -283,7 +283,7 @@ _**应优先考虑使用动词的过去分词为non mutating方法命名（通�
 ```swift
 /// Reverses self in-place.
 mutating func reverse()
- 
+
 /// Returns a reversed copy of self.
 func reversed() -> Self
 
@@ -300,7 +300,7 @@ _**当动词带有一个直接宾语导致添加`ed`会造成语法错误时，�
 ```swift
 /// Strips all the newlines from self
 mutating func stripNewlines()
- 
+
 /// Returns a copy of self with all the newlines stripped.
 func strippingNewlines() -> String
 ...
@@ -321,7 +321,7 @@ let oneLine = t.strippingNewlines()
 例如：`Equatable`，`ProgressReporting`。
 
 ##### 2.2.2.6 其它的**类型、属性、变量和常量应该使用名词**；
- 
+
 ### 2.3 正确使用专业术语
 
 **Term of Art**
@@ -399,7 +399,7 @@ var enjoysScubaDiving = true
 extension Shape {
    /// Returns `true` iff `other` is within the area of `self`.
    func contains(other: Point) -> Bool { ... }
- 
+
    /// Returns `true` iff `other` is entirely within the area of `self`.
    func contains(other: Shape) -> Bool { ... }
 
@@ -423,7 +423,7 @@ extension Collection where Element : Equatable {
 extension Database {
    /// Rebuilds the database's search index
    func index() { ... }
- 
+
    /// Returns the `n`th row in the given table.
    func index(n: Int, inTable: TableID) -> TableRow { ... }
 }
@@ -644,7 +644,7 @@ words.split(12)       Split the number 12
 ///     was allocated.
 ///   - capacityChanged: `true` iff `capacity` was updated.
 mutating func ensureUniqueStorage(
-    minimumCapacity requestedCapacity: Int, 
+    minimumCapacity requestedCapacity: Int,
     allocate: (byteCount: Int) -> UnsafePointer<Void>
 ) -> (reallocated: Bool, capacityChanged: Bool)
 ```
