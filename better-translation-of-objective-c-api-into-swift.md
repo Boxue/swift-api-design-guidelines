@@ -150,12 +150,6 @@ func documentForURL(_: NSURL) -> NSDocument?
 var thumbnailPreview : UIView  // not matched
 ```
 
-基于以上两个原则，我们就可以执行以下一系列匹配过程：
-
-```swift
-func constraintEqualToAnchor(anchor: NSLayoutAnchor) -> NSLayoutConstraint?
-```
-
 * **匹配的字符扩展到类型名称的结尾**：因为我们支持匹配一个类型名称的后缀，因此：
 
 ```swift
