@@ -175,8 +175,94 @@ func constraintEqualTo(anchor: NSLayoutAnchor) -> NSLayoutConstraint?
 
 **特殊后缀匹配**：
 
+* 在selector片段中，用一个空字符串后缀匹配类型名称中的`Type`或`_t`，例如：
+
+```swift
+// 注：用一个空字符串匹配到了Type，因此SaveOperation加上空字符串就匹配了SaveOperationType，
+// 于是Selector中的SaveOperation的部分就可以删除了。
+func writableTypesForSaveOperation(_: NSSaveOperationType) -> [String]
+// 注：用一个空字符串匹配到了Type。
+func objectForKey(_: KeyType) -> AnyObject
+// 注：用一个空字符串匹配到了_t。
+func startWithQueue(_: dispatch_queue_t, completionHandler: MKMapSnapshotCompletionhandler)
+```
+
+	* selector片段中的空字符串可以匹配类型名称中“数字+D”形式的后缀，例如：
+
+```swift
+// Coordinate+空字符串匹配到了2D
+func pointForCoordinate(_: CLLocationCoordinate2D) -> NSPoint
+```
+
 #### 删除类型名称时的限制
 
+如果在删除selector名称时违背了以下任何限制，那么删除行为将不会进行：
+
+* **不要删光所有的selector**；
+* **不要把selector的第一个片段转换成Swift关键字**：
+
+在Swift里，Objective-C方法中的第一个selector片段会变成**构建一个方法名称的基础**或者**一个属性的名字**。
+
+它们之中的任何一种，都不能是Swift关键字，否则，用户就需要使用反引号来使用它们。
+
+例如，下面的用法是合理的：
+
+```swift
+extension NSParagraphStyle {
+    class func defaultParagraphStyle() -> NSParagraphStyle
+}
+let defaultStyle = NSParagraphStyle.defaultParagraphStyle()  // OK
+```
+
+如果我们删掉`ParagraphStyle`，用起来就会很糟糕：
+
+```swift
+extension NSParagraphStyle {
+    class func `default`() -> NSParagraphStyle
+}
+let defaultStyle = NSParagraphStyle.`default`()    // Awkward
+```
+
+Objective-C方法名中的其它selector片段，会变成Swift方法的参数label，这个label是允许使用Swift关键字的，例如：
+
+```swift
+receiver.handle(someMessage, for: somebody)  // OK
+```
+
+* **不要把方法名称转换成“get”，“Set”，“with”, “for”或“using”**，用这些单词形成的方法名称表意非常空洞；
+* **不要删除方法名称中那些介绍参数的后缀，除非这个后缀前面直接连接一个介词、动词或动名词**：
+
+这种启发式转换帮助我们避免破坏那些介绍参数的名词短语。直接删掉名词短语后缀通常不会带来我们预期的表意结果。例如：
+
+```swift
+func setTextColor(_: UIColor)
+...
+button.setTextColor(.red())  // clear
+```
+
+如果我们删掉方法名中的`Color`，只剩下`Text`，调用方法时表达的语意就会让人困惑：
+
+```swift
+func setText(_: UIColor)
+...
+button.setText(.red())      // appears to be setting the text!
+```
+
+* **如果方法的名字匹配它所在的类型中的一个属性，不要转换方法名**：
+
+这种启发式转换使我们可以避免让那些修改类属性的方法转换出过于泛泛的名字，例如：
+
+```swift
+var gestureRecognizers: [UIGestureRecognizer]
+func addGestureRecognizer(_: UIGestureRecognizer)
+```
+
+如果我们删掉方法中的`GestureRecognizer`，只留下`add`，对于一个实际上是在修改`gesturerecognizers`属性的方法来说，这个名字明显太泛泛了。
+
+```swift
+var gestureRecognizers: [UIGestureRecognizer]
+func add(_: UIGestureRecognizer) // should indicate that we're adding to the property
+```
 
 #### 删除步骤
 
@@ -197,3 +283,4 @@ func constraintEqualTo(anchor: NSLayoutAnchor) -> NSLayoutConstraint?
 
 
 ### 声明
+
