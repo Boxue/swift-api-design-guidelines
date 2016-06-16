@@ -147,7 +147,7 @@ CGFloat           | CGFloat
 * 当Objective-C的类型是一个函数指针或引用时，Swift中的类型名称是`Function`；
 * 当Objective-C的类型是一个除`NSInteger`、`NSUInteger`或`CGFloat`之外的typedef时，Swift中的类型名称则是这些typedef实际代表的类型的名称。例如，Objective-C中的类型是`UILayoutPriority`，实际上它是一个`float`类型的typedef，我们将（在老版本的Swift API里）尝试匹配字符串`Float`。\[详见API设计原则之为弱类型提供信息补偿\]。
 
-#### 匹配
+#### 匹配类型名称
 
 为了在selector片段中删除冗余的类型信息，我们需要在selector中匹配包含上述类型信息的字符串。
 
@@ -286,7 +286,7 @@ var gestureRecognizers: [UIGestureRecognizer]
 func add(_: UIGestureRecognizer) // should indicate that we're adding to the property
 ```
 
-#### 删除步骤
+#### 删除类型名称的步骤
 
 我们按照下面的步骤删除冗余的名字：
 
