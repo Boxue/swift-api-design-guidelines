@@ -1,4 +1,4 @@
-# 更好的把Objective-C APIs转换成Swift版本
+# SE-0005 更好的把Objective-C APIs转换成Swift版本
 
 ## 提交review前必读
 
@@ -26,14 +26,16 @@
 Objective-C版本的[Cocoa编码指南](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)为使用Objective-C创建简单、一致的API提供了完整的框架。但是Swift是一门不同的编程语言，特别是，它是一门支持类型推导、泛型编程和重载等语言特性的强类型语言。于是，基于Objective-C编写的APIs搭配上Swift就有点儿水土不服，这些API在Swift里用起来显得很啰嗦。例如：
 
 ```swift
-let content = listItemView.text.stringByTrimmingCharactersInSet(
-    NSCharacterSet.whitespaceAndNewlineCharacterSet())
+let content = 
+    listItemView.text.stringByTrimmingCharactersInSet(
+        NSCharacterSet.whitespaceAndNewlineCharacterSet())
 ```
 
 这明显是一个Objective-C风格的函数调用。如果我们用Swift编写，结果看上去应该是这样的：
 
 ```swift
-let content = listItemView.text.trimming(.whitespaceAndNewlines)
+let content = 
+    listItemView.text.trimming(.whitespaceAndNewlines)
 ```
 
 这显然是更遵循[Swift API设计指南](https://github.com/apple/swift-evolution/blob/master/proposals/0023-api-guidelines.md)中的用法，特别是，我们忽略掉了那些编译器已经能强制约束我们使用的类型名称（例如：view，string, character set等）。这份提议的目的，就是让从Objective-C引入API更加“Swift原汁原味”，让Swift开发者在使用Objective API时，有和使用Swift“原生代码”更为一致的开发体验。
@@ -50,7 +52,7 @@ let content = listItemView.text.trimming(.whitespaceAndNewlines)
 
 1. **泛化`swift_name`属性的应用范围**：Clang的`swift_name`现在只能用于重命名`enum`的cases以及工厂方法。当它被引入到Swift后，它应该被泛化成允许重命名任意的C或Objective-C的语言元素，以方便C或Objective-C API的作者更好的调校重命名的过程。
 2. **去掉冗余的类型名称**：Objective-C Cocoa编码指南要求方法声明中要带有每一个参数的描述。当这个描述重申了参数的类型时，方法的名字就违背了Swift编码指南中关于“忽略不需要的字符”的设计要求。因此，执行翻译时，我们应该去掉那些描述类型的部分。
-3. **添加默认参数**：如果Objective-C API的声明强烈暗示参数需要默认参数，应该为这样的API在引入Swift时，添加默认参数。例如，一个表示选项集合的参数，可以被设置成\[\]。
+3. **添加默认参数**：如果Objective-C API的声明强烈暗示参数需要参数默认值，应该为这样的API在引入Swift时，添加参数默认值。例如，一个表示选项集合的参数，可以被设置成\[\]。
 4. **为第一个参数添加label**：如果方法的第一个参数有默认值，[应该为这个参数设置一个参数label](https://swift.org/documentation/api-design-guidelines#first-argument-label)。
 5. **给Bool语义的属性添加“is”前缀**：[Bool属性应该在读取的时候，表达断言的语义](https://swift.org/documentation/api-design-guidelines#boolean-assertions)，但是Objective-C Cocoa编码指南中，[禁止在属性名中使用单词“is”](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingIvarsAndTypes.html#//apple_ref/doc/uid/20001284-BAJGIIJE)。因此，当引入这样的属性时，为它们添加“is”前缀。
 6. **表达值语义的名字，首字母小写**：在Swift API设计指南中，要求对“非类型声明（non-type declarations）”使用小写字母。包括，`enum`中的`case`以及属性或函数的声明。因此，引入Objective-C中没有前缀的值时，让这些名字的首字母小写（例如：一个叫做`URLHandler`的属性应该变成`urlHandler`）。
@@ -63,8 +65,10 @@ class UIBezierPath : NSObject, NSCopying, NSCoding {
     convenience init(ovalInRect: CGRect)
     func moveToPoint(_: CGPoint)
     func addLineToPoint(_: CGPoint)
-    func addCurveToPoint(_: CGPoint, controlPoint1: CGPoint, controlPoint2: CGPoint)
-    func addQuadCurveToPoint(_: CGPoint, controlPoint: CGPoint)
+    func addCurveToPoint(_: CGPoint, 
+        controlPoint1: CGPoint, controlPoint2: CGPoint)
+    func addQuadCurveToPoint(_: CGPoint, 
+        controlPoint: CGPoint)
     func appendPath(_: UIBezierPath)
     func bezierPathByReversingPath() -> UIBezierPath
     func applyTransform(_: CGAffineTransform)
@@ -84,8 +88,11 @@ class UIBezierPath : NSObject, NSCopying, NSCoding {
     convenience init(ovalIn rect: CGRect)
     func move(to point: CGPoint)
     func addLine(to point: CGPoint)
-    func addCurve(to endPoint: CGPoint, controlPoint1 controlPoint1: CGPoint, controlPoint2 controlPoint2: CGPoint)
-    func addQuadCurve(to endPoint: CGPoint, controlPoint controlPoint: CGPoint)
+    func addCurve(to endPoint: CGPoint, 
+        controlPoint1 controlPoint1: CGPoint, 
+        controlPoint2 controlPoint2: CGPoint)
+    func addQuadCurve(to endPoint: CGPoint, 
+          controlPoint controlPoint: CGPoint)
     func append(_ bezierPath: UIBezierPath)
     func reversing() -> UIBezierPath
     func apply(_ transform: CGAffineTransform)
@@ -99,6 +106,16 @@ class UIBezierPath : NSObject, NSCopying, NSCoding {
 ```
 
 可以看到，在Swift 3版本里，原来API里很多描述类型信息的部分都被去掉了。转换后的结果，更接近Swift API设计指南中的要求。现在，Swift开发者可以通过类似`foo.copy()`这样的方式，拷贝任何遵从`NSCopying`的对象，而不用再像原来`foo.copyWithZone(nil)`这样的方式。
+
+## 实现过程
+
+这份提议的一个试验性实现在Swift main repository中。Swift编译器提供了一些开关帮助我们查看按照这份提议中的描述，被引入的Objective-C API以及Swift代码自身的转换结果（例如，通过utils/omit-needless-words.py脚本）。这些开关是：
+
+* `--enable-omit-needless-words`：这个开关启用了对Clang importer绝大多数的改动（上一节中提到的1，2，4，5）。它主要适合用来打印在Master和[Swift 2.2](https://github.com/apple/swift/tree/swift-2.2-branch)分支上，Swift对Objective-C模块提供的接口。在[Swift 3 API Guidelines分支](https://github.com/apple/swift/tree/swift-3-api-guidelines)上，它默认是开启的；
+* `--enable-infer-default-arguments`：这个开关启用了Clang importer中，对参数默认值的干涉（上一节的3）；
+* `--swift-migration`：仅在[Swift 2.2分支](https://github.com/apple/swift/tree/swift-2.2-branch)上才有的开关，这个选项通过添加"Fix-Its"，执行把名称从Swift 2迁移到Swift 3的基本转换。通过和其它编译器开关（例如：-fixit-code，-fixit-all）以及一个收集和应用“Fix-Its”的脚本（utils/apply-fixit-edits.py）一起使用，这个开关为我们提供的基础迁移工作可以帮助我们了解Swift代码在各种声明和调用场景里，按照这份提议被转换后的样子；
+
+为了使用转换后的名称，真正编译Swift 3代码，可以使用[Swift 3 API Guidelines](https://github.com/apple/swift/tree/swift-3-api-guidelines)分支。编译器默认启用了上述功能并带有随之一起改动的标准库。
 
 ## 设计细节
 
@@ -178,16 +195,19 @@ func constraintEqualTo(anchor: NSLayoutAnchor) -> NSLayoutConstraint?
 * 在selector片段中，用一个空字符串后缀匹配类型名称中的`Type`或`_t`，例如：
 
 ```swift
-// 注：用一个空字符串匹配到了Type，因此SaveOperation加上空字符串就匹配了SaveOperationType，
+// 注：用一个空字符串匹配到了Type，因此SaveOperation加上
+// 空字符串就匹配了SaveOperationType，
 // 于是Selector中的SaveOperation的部分就可以删除了。
-func writableTypesForSaveOperation(_: NSSaveOperationType) -> [String]
+func writableTypesForSaveOperation(
+    _: NSSaveOperationType) -> [String]
 // 注：用一个空字符串匹配到了Type。
 func objectForKey(_: KeyType) -> AnyObject
 // 注：用一个空字符串匹配到了_t。
-func startWithQueue(_: dispatch_queue_t, completionHandler: MKMapSnapshotCompletionhandler)
+func startWithQueue(_: dispatch_queue_t, 
+    completionHandler: MKMapSnapshotCompletionhandler)
 ```
 
-	* selector片段中的空字符串可以匹配类型名称中“数字+D”形式的后缀，例如：
+    * selector片段中的空字符串可以匹配类型名称中“数字+D”形式的后缀，例如：
 
 ```swift
 // Coordinate+空字符串匹配到了2D
@@ -211,7 +231,8 @@ func pointForCoordinate(_: CLLocationCoordinate2D) -> NSPoint
 extension NSParagraphStyle {
     class func defaultParagraphStyle() -> NSParagraphStyle
 }
-let defaultStyle = NSParagraphStyle.defaultParagraphStyle()  // OK
+let defaultStyle = 
+    NSParagraphStyle.defaultParagraphStyle()  // OK
 ```
 
 如果我们删掉`ParagraphStyle`，用起来就会很糟糕：
@@ -220,7 +241,8 @@ let defaultStyle = NSParagraphStyle.defaultParagraphStyle()  // OK
 extension NSParagraphStyle {
     class func `default`() -> NSParagraphStyle
 }
-let defaultStyle = NSParagraphStyle.`default`()    // Awkward
+let defaultStyle = 
+    NSParagraphStyle.`default`()    // Awkward
 ```
 
 Objective-C方法名中的其它selector片段，会变成Swift方法的参数label，这个label是允许使用Swift关键字的，例如：
@@ -266,21 +288,295 @@ func add(_: UIGestureRecognizer) // should indicate that we're adding to the pro
 
 #### 删除步骤
 
+我们按照下面的步骤删除冗余的名字：
 
-#### 添加默认参数
+1. **删除头部的结果类型信息**。特别是，当以下情形的时候：
 
+    * 当方法返回一个自身所在的类型时；
+    * 并且这个类型的名称匹配方法中第一个selector片段；
+    * 匹配到的名词后面，紧跟一个介词；
+    
+    就可以删除掉这个匹配。
+    
+    通常，匹配以上这些条件的属性和方法，它们都用于把自身类型变成其它某种等价形式的值。
+    
+    例如：
+    
+    ```swift
+    extension NSColor {
+      func colorWithAlphaComponent(_: CGFloat) -> NSColor
+    }
+    let translucentForeground = 
+        foregroundColor.colorWithAlphaComponent(0.5)
+    ```
+    
+    可以被简化成：
+    
+    ```swift
+    extension NSColor {
+        func withAlphaComponent(_: CGFloat) -> NSColor
+    }
+    let translucentForeground = 
+        foregroundColor.withAlphaComponent(0.5)
+    ```
+
+2. **删掉多余的介词By**。特别是，当以下情形的时候：
+
+    * 在第一步中删掉了开始的名词之后；
+    * 方法名称中，剩余的部分用`By`+动名词的形式；
+    
+    就可以删掉多余的`By`了。
+    
+    这种启发式方法可以让我们使用类似`a = b.frobnicating(c)`的方法调用形式。例如：
+    
+    ```swift
+    extension NSString {
+        func stringByApplyingTransform(_: NSString, 
+            reverse: Bool) -> NSString?
+    }
+    let sanitizedInput = 
+        rawInput.stringByApplyingTransform(
+            NSStringTransformToXMLHex, reverse: false)
+    ```
+    
+    就可以通过第一步和第二步，被简化成：
+    
+    ```swift
+    extension NSString {
+        func applyingTransform(
+            _: NSString, reverse: Bool
+        ) -> NString?
+    }
+    
+    let sanitizedInput = 
+        rawInput.applyingTransform(NSStringTransformToXMLHex, 
+            reverse: false)
+    ```
+
+3. **在方法签名的最后一个selector片段中，删除任何匹配到的类型名称**。特别是以下类型：
+
+    方法名称的尾部是 | 删除匹配到的
+    --------------- | ------------
+    用于介绍参数的selector片段 | 参数类型名称
+    一个属性名称 | 属性的类型名称
+    一个不带参数的方法 | 返回值的类型名称
+    
+    例如，下面这些情况：
+    
+    ```swift
+    extension NSDocumentController {
+        func documentForURL(
+            _ url: NSURL) -> NSDocument? // parameter introducer
+    }
+    extension NSManagedObjectContext {
+        var parentContext: NSManagedObjectContext?  // property
+    }
+    extension UIColor {
+        class func darkGrayColor() -> UIColor  // zero-argument method
+    }
+    ...
+    
+    myDocument = self.documentForURL(locationOfFile)
+    if self.managedObjectContext.parentContext != changedContext { 
+        return 
+    }
+    
+    foregroundColor = .darkGrayColor()
+    ```
+    
+    可以被简化成：
+    
+    ```swift
+    extension NSDocumentController {
+        func documentFor(_ url: NSURL) -> NSDocument?
+    }
+    extension NSManagedObjectContext {
+        var parent : NSManagedObjectContext?
+    }
+    extension UIColor {
+        class func darkGray() -> UIColor
+    }
+    ...
+    myDocument = self.documentFor(locationOfFile)
+    if self.managedObjectContext.parent != changedContext { 
+        return 
+    }
+    foregroundColor = .darkGray()
+    ```
+
+4. **只要匹配到的类型名称前面直接连接动词，即便这个类型名称在方法名中间也可以删掉它**，例如：
+
+    ```swift
+    extension UIViewController {
+        func dismissViewControllerAnimated(
+            flag: Bool, 
+            completion: (() -> Void)? = nil)
+    }
+    ```
+    
+    可以被简化成：
+    
+    ```swift
+    extension UIViewController {
+        func dismissAnimated(
+            flag: Bool, 
+            completion: (() -> Void)? = nil)
+    }
+    ```
+
+##### 为什么删除一定要按照顺序执行呢？
+
+下面的简化过程有些在方法名称的第一个selector片段中匹配，有些在方法名称的结尾匹配。当[名称删除限制]()阻止我们从开始和结尾进行删除时，从头部开始删除名称可以保持方法家族的一致性，例如，对于`NSFontDescriptor`来说：
+
+```swift
+func fontDescriptorWithSymbolicTraits(
+    _: NSFontSymbolicTraits) -> NSFontDescriptor
+func fontDescriptorWithSize(
+    _: CGFloat) -> UIFontDescriptor
+func fontDescriptorWithMatrix(
+    _: CGAffineTransform) ->  UIFontDescriptor
+...
+```
+
+按照头部匹配规则，它们可以变成这样：
+
+```swift
+func withSymbolicTraits(
+    _: UIFontDescriptorSymbolicTraits) ->  UIFontDescriptor
+func withSize(
+    _: CGFloat) -> UIFontDescriptor
+func withMatrix(
+    _: CGAffineTransform) -> UIFontDescriptor
+...
+```
+
+如果我们坚持从尾部进行删除，删掉第一个方法中的`SymbolicTraits`之后，我们就无法再继续删除头部的`fontDescriptor`了，因为这违背了我们在[名称限制约束]()中定义的原则，只留下一个`with`表意是不够的。
+
+```swift
+func fontDescriptorWith(
+    _: NSFontSymbolicTraits) -> NSFontDescriptor // inconsistent
+func withSize(_: CGFloat) -> UIFontDescriptor
+func withMatrix(_: CGAffineTransform) -> UIFontDescriptor
+...
+```
+
+> 注：这样一来，我们就破坏了原来家族方法的名称一致性。
+
+#### 添加参数默认值
+
+出了那些只有一个参数的setter方法之外，在以下情况时，应该给参数添加默认值：
+
+* 让**可以为空的trailing closure参数**值为`nil`；
+* 让**可以为空的`NSZone`参数**默认为`nil`。Zones几乎不在Swift中使用，它们应该总是为`nil`的；
+* 让**参数名中带有"Options"字样的参数**值默认为`[]`，表示空的选项集合；
+* 和选项、属性或信息有关的NSDictionary参数，默认值为`[:]`；
+
+把这些规则集合起来，这个启发式方法可以把下面的代码：
+
+```swift
+rootViewController.presentViewController(
+     alert, animated: true, completion: nil)
+    
+UIView.animateWithDuration(0.2, delay: 0.0, 
+    options: [], 
+    animations: { self.logo.alpha = 0.0 }) {
+    _ in self.logo.hidden = true 
+}
+```
+
+变成这个样子：
+
+```swift
+rootViewController.present(alert, animated: true)
+
+UIView.animateWithDuration(0.2, delay: 0.0, 
+    animations: { self.logo.alpha = 0.0 }) { 
+    _ in self.logo.hidden = true 
+}
+
+```
 
 #### 为第一个参数添加label
 
+如果方法名称中第一个selector片段中包含一个介词，**就把这个selector片段从最后一个介词处分开**，把这个selector中，这个介词后面的部分变成第一个参数的label。
+
+除了为大量API的第一个参数添加label之外，当第一个参数有默认值时，这种启发式方法还能消除方法被调用时，方法名称表达的模糊语义。例如：
+
+```swift
+extension UIBezierPath {
+    func enumerateObjectsWith(
+        _: NSEnumerationOptions = [], 
+        using: (AnyObject, UnsafeMutablePointer) -> Void)
+}
+
+array.enumerateObjectsWith(.Reverse) { // OK
+   // ..
+}
+
+array.enumerateObjectsWith() { // ?? With what?
+   // ..
+}
+```
+
+变成：
+
+```swift
+extension NSArray {
+    func enumerateObjects(
+      options _: NSEnumerationOptions = [], 
+      using: (AnyObject, UnsafeMutablePointer) -> Void)
+}
+
+array.enumerateObjects(options: .Reverse) { // OK
+   // ..
+}
+
+array.enumerateObjects() { // OK
+   // ..
+}
+```
 
 #### 为Bool语义的属性添加“is”前缀
 
+在Objective-C里，表达Bool语义的属性，使用对应的getter方法作为这个属性在Swift中的名字。例如：
+
+```objective-c
+@interface NSBezierPath : NSObject
+@property (readonly,getter=isEmpty) BOOL empty;
+```
+
+会变成：
+
+```swift
+extension NSBezierPath {
+  var isEmpty: Bool
+}
+
+if path.isEmpty { ... }
+```
 
 ### 实现比较方法时遵从的准则
 
+现如今，例如，开发者经常会扩展`NSDate`让它遵从`Comparable`或使用`NSDate`的`compare(_:) -> NSComparisonResult`方法。在这些场景里，对`NSDate`使用表操作符会有效提高代码可读性，例如`someDate < today`要比`someDate.comare(today) == .OrderedAscending`要清晰的多。由于转换过程可以确定一个类是否实现了Objective-C中的比较方法，所有实现了这个方法的类都可以按照遵从`Comparable` protocol的方式引入。
 
-### 对已有代码的修改
+不仅仅是`NSDate`，Foundation中的一些其它类也会被这个改变影响，例如：
 
+```swift
+func compare(other: NSDate) -> NSComparisonResult
+func compare(decimalNumber: NSNumber) -> NSComparisonResult
+func compare(otherObject: NSIndexPath) -> NSComparisonResult
+func compare(string: String) -> NSComparisonResult
+func compare(otherNumber: NSNumber) -> NSComparisonResult
+```
+
+### 对已有代码的影响
+
+这份提议中的改变为使用Objective-C框架的已有的Swift代码引入了大量破坏性改变（breaking change）。这些然需要一个迁移工具把Swift 2代码迁移到Swift 3。在[实现过程]()中描述的`-swift3-migration`开关为这样的转换工具提供了基本信息。另外，编译器需要为那些引用了旧版本Objective-C名称的Swift代码提供良好的错误信息（带有修改建议），除此之外，还应该提供一个辅助的通过旧版本名称进行查询的机制。
 
 ### 声明
+
+为了最终形成[Swift API设计指南](https://swift.org/documentation/api-design-guidelines)，这份自动名称转换提议由Dmitri Hrybenko, Ted Kremenek, Chris Lattner, Alex Migicovsky, Max Moiseev, Ali Ozer和Tony Parker开发。
+
+
+补充添加进来的comparable部分之前由[Chris Amanse](https://github.com/chrisamanse)提交到了[core-libraries](https://swift.org/core-libraries/)邮件列表中。Philippe Hausler进行review之后，添加到了这份提议中。
 
