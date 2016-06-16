@@ -557,7 +557,7 @@ if path.isEmpty { ... }
 
 ### 实现比较方法时遵从的准则
 
-现如今，例如，开发者经常会扩展`NSDate`让它遵从`Comparable`或使用`NSDate`的`compare(_:) -> NSComparisonResult`方法。在这些场景里，对`NSDate`使用表操作符会有效提高代码可读性，例如`someDate < today`要比`someDate.comare(today) == .OrderedAscending`要清晰的多。由于转换过程可以确定一个类是否实现了Objective-C中的比较方法，所有实现了这个方法的类都可以按照遵从`Comparable` protocol的方式引入。
+现如今，为了实现对象比较，例如对`NSDate`来说，开发者经常会扩展`NSDate`让它遵从`Comparable`或使用`NSDate`的`compare(_:) -> NSComparisonResult`方法。在这些场景里，对`NSDate`使用表操作符会有效提高代码可读性，例如`someDate < today`要比`someDate.comare(today) == .OrderedAscending`要清晰的多。由于转换过程可以确定一个类是否实现了Objective-C中的比较方法，所有实现了这个方法的类都可以按照遵从`Comparable` protocol的方式引入。
 
 不仅仅是`NSDate`，Foundation中的一些其它类也会被这个改变影响，例如：
 
