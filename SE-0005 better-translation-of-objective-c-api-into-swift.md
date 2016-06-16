@@ -44,7 +44,7 @@ let content =
 
 ## 提议的解决方案
 
-提议的解决方案引入了一种定义Objective-C [Cocoa编码指南](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)和[Swift API设计指南](https://github.com/apple/swift-evolution/blob/master/proposals/0023-api-guidelines.md)区别的方式，这种方式可以帮助我们通过设置一些列规则，参照Cocoa编码指南以及Objective-C中既定的习俗，把前者变换成后者。这是对用Clang importer进行名称翻译的一种启发式扩展。例如：把Objective-C中的全局`enum`常量变成Swift中的cases（这要去掉Objective-C为全局enum常量名设置的前缀）以及把Objective-C中的工厂方法（例如：`+[NSNumber numberWithBool:]`）映射成Swift中的初始化方法（`NSNumber(bool: true)`）。
+提议的解决方案引入了一种定义Objective-C [Cocoa编码指南](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)和[Swift API设计指南](https://github.com/apple/swift-evolution/blob/master/proposals/0023-api-guidelines.md)区别的方式，这种方式可以帮助我们通过设置一系列规则，参照Cocoa编码指南以及Objective-C中既定的习俗，把前者变换成后者。这是对用Clang importer进行名称翻译的一种启发式扩展。例如：把Objective-C中的全局`enum`常量变成Swift中的cases（这要去掉Objective-C为全局enum常量名设置的前缀）以及把Objective-C中的工厂方法（例如：`+[NSNumber numberWithBool:]`）映射成Swift中的初始化方法（`NSNumber(bool: true)`）。
 
 这份提议中描述的启发式方法需要通过覆盖大量的Objective-C API进行迭代、调校和试验，以确保它最终可以正常工作。但是，它仍旧是不可能完美工作的，一定会有一些API，经过“翻译”之后，会导致其不如原来表意清晰。因此，我们的目标是确保绝大多数的Objective C API都可以在翻译之后更加的Swift原汁原味。并且允许Objective-C API的作者对于那些不满意的翻译，在Objective-C头文件中，通过API注释说明问题。
 
@@ -571,7 +571,7 @@ func compare(otherNumber: NSNumber) -> NSComparisonResult
 
 ### 对已有代码的影响
 
-这份提议中的改变为使用Objective-C框架的已有的Swift代码引入了大量破坏性改变（breaking change）。这些然需要一个迁移工具把Swift 2代码迁移到Swift 3。在[实现过程]()中描述的`-swift3-migration`开关为这样的转换工具提供了基本信息。另外，编译器需要为那些引用了旧版本Objective-C名称的Swift代码提供良好的错误信息（带有修改建议），除此之外，还应该提供一个辅助的通过旧版本名称进行查询的机制。
+这份提议中的改变为使用Objective-C框架的已有的Swift代码引入了大量破坏性改变（breaking change）。以至于，我们需要一个迁移工具把Swift 2代码迁移到Swift 3。在[实现过程]()中描述的`-swift3-migration`开关为这样的转换工具提供了基本信息。另外，编译器需要为那些引用了旧版本Objective-C名称的Swift代码提供良好的错误信息（带有修改建议），除此之外，还应该提供一个辅助的通过旧版本名称进行查询的机制。
 
 ### 声明
 
