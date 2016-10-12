@@ -406,8 +406,9 @@ extension Shape {
     /// Returns `true` iff `other` is within the area of `self`.
     func contains(other: LineSegment) -> Bool { ... }
 }
+```
 
-并且，由于几何和集合属于两个不同的技术领域，因此，同一个程序中，在集合中使用`contains`也是没问题的：
+并且，由于几何学和集合属于两个不同的技术领域，因此，同一个程序中，在集合中使用`contains`也是没问题的：
 
 ```swift
 extension Collection where Element : Equatable {
